@@ -7,6 +7,7 @@
 
   <title>SpendWise</title>
 
+  <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -15,7 +16,8 @@
   <header class="navbar">
 
     <div class="logo">
-      SpendWise
+      <img src="logo.png" alt="SpendWise logo">
+      <span>SpendWise</span>
     </div>
 
     <nav class="nav-links">
@@ -30,184 +32,371 @@
 
   </header>
 
-  <!-- HERO SECTION -->
   <main>
-    <section class="hero">
-      <div class="hero-content">
+    <!-- HOME VIEW -->
+    <div id="home-view" class="view active">
 
-        <p class="hero-tag">SIMPLE • SMART • PERSONAL</p>
-        <h1>
-          Take control of
-          <span>your spending.</span>
-        </h1>
+      <!-- HERO SECTION -->
+      <section class="hero">
+        <div class="hero-content">
 
-        <p class="hero-description">
-          Track your expenses, manage your budget,
-          and understand where your money goes —
-          all in one place.
+          <p class="hero-tag">SIMPLE • SMART • PERSONAL</p>
+          <h1>
+            Take control of
+            <span>your spending.</span>
+          </h1>
+
+          <p class="hero-description">
+            Track your expenses, manage your budget,
+            and understand where your money goes —
+            all in one place.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="#signup" class="primary-btn">
+              Get Started
+            </a>
+            <a href="#features" class="secondary-btn">
+              Explore Features
+            </a>
+          </div>
+
+        </div>
+
+        <div class="hero-preview">
+          <div class="preview-header">
+            <span>September Overview</span>
+            <span>•••</span>
+          </div>
+          <div class="preview-balance">
+            <p>Total Spent</p>
+            <h2>₹18,450</h2>
+          </div>
+
+          <div class="preview-cards">
+            <div>
+              <small>Budget</small>
+              <strong>₹25,000</strong>
+            </div>
+            <div>
+              <small>Remaining</small>
+              <strong>₹6,550</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PHOTO REEL -->
+
+      <section class="photo-reel">
+
+        <div class="reel-track">
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80"
+              alt="Financial planning">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80"
+              alt="Digital payment">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&w=800&q=80"
+              alt="Financial analysis">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
+              alt="Analytics dashboard">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=800&q=80"
+              alt="Online shopping">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80"
+              alt="Business planning">
+          </div>
+
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80" alt="">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80" alt="">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&w=800&q=80" alt="">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
+              alt="">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=800&q=80" alt="">
+          </div>
+
+          <div class="reel-item">
+            <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80" alt="">
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- FEATURES -->
+      <section class="features" id="features">
+
+        <div class="section-heading">
+          <p>FEATURES</p>
+          <h2>
+            Everything you need to
+            manage your spending.
+          </h2>
+        </div>
+
+        <div class="feature-grid">
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              ₹
+            </div>
+            <h3>
+              Track Expenses
+            </h3>
+            <p>
+              Record and organize your everyday
+              expenses in one simple place.
+            </p>
+          </article>
+
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              ◫
+            </div>
+            <h3>
+              Manage Your Budget
+            </h3>
+            <p>
+              Set a monthly budget and keep track
+              of how much you have left.
+            </p>
+          </article>
+
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              ↗
+            </div>
+            <h3>
+              Understand Your Spending
+            </h3>
+            <p>
+              See where your money goes through
+              simple charts and insights.
+            </p>
+          </article>
+
+        </div>
+
+      </section>
+
+      <!-- HOW IT WORKS -->
+      <section class="how-it-works" id="how-it-works">
+
+        <div class="section-heading">
+          <p>HOW IT WORKS</p>
+          <h2>
+            Start managing your money
+            in three simple steps.
+          </h2>
+        </div>
+
+        <div class="steps">
+          <article class="step">
+            <span class="step-number">
+              01
+            </span>
+            <h3>
+              Track
+            </h3>
+            <p>
+              Add your daily expenses
+              with just a few details.
+            </p>
+          </article>
+
+          <article class="step">
+            <span class="step-number">
+              02
+            </span>
+            <h3>
+              Manage
+            </h3>
+            <p>
+              Set your budget and keep
+              an eye on your spending.
+            </p>
+          </article>
+
+
+          <article class="step">
+            <span class="step-number">
+              03
+            </span>
+            <h3>
+              Understand
+            </h3>
+            <p>
+              Use your spending patterns
+              to make better financial decisions.
+            </p>
+          </article>
+
+        </div>
+
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <div class="footer-logo">
+          <img src="logo.png" alt="SpendWise logo">
+          <span>SpendWise</span>
+        </div>
+        <p>
+          Simple tools for smarter spending.
         </p>
+        <p class="copyright">
+          © 2026 SpendWise. All rights reserved.
+        </p>
+      </footer>
+    </div>
 
-        <div class="hero-buttons">
-          <a href="#signup" class="primary-btn">
-            Get Started
-          </a>
-          <a href="#features" class="secondary-btn">
-            Explore Features
-          </a>
+    <!-- SIGN UP VIEW-->
+    <section id="signup-view" class="view">
+      <div class="auth-layout">
+
+        <div class="auth-image">
+          <img src="auth-finance.png" alt="Personal finance workspace">
         </div>
 
-      </div>
+        <div class="auth-container">
 
-      <div class="hero-preview">
-        <div class="preview-header">
-          <span>September Overview</span>
-          <span>•••</span>
-        </div>
-        <div class="preview-balance">
-          <p>Total Spent</p>
-          <h2>₹18,450</h2>
-        </div>
-
-        <div class="preview-cards">
-          <div>
-            <small>Budget</small>
-            <strong>₹25,000</strong>
+          <div class="auth-header">
+            <p class="auth-tag">GET STARTED</p>
+            <h2>Create your account</h2>
+            <p>
+              Start tracking your spending and take control
+              of your budget.
+            </p>
           </div>
-          <div>
-            <small>Remaining</small>
-            <strong>₹6,550</strong>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section class="features" id="features">
+          <form id="signup-form">
 
-      <div class="section-heading">
-        <p>FEATURES</p>
-        <h2>
-          Everything you need to
-          manage your spending.
-        </h2>
-      </div>
+            <div class="form-group">
+              <label for="signup-name">Name</label>
+              <input type="text" id="signup-name" placeholder="Enter your name">
+            </div>
 
-      <div class="feature-grid">
+            <div class="form-group">
+              <label for="signup-email">Email</label>
+              <input type="email" id="signup-email" placeholder="Enter your email">
+            </div>
 
-        <article class="feature-card">
-          <div class="feature-icon">
-            ₹
-          </div>
-          <h3>
-            Track Expenses
-          </h3>
-          <p>
-            Record and organize your everyday
-            expenses in one simple place.
+            <div class="form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" placeholder="Create a password">
+            </div>
+
+            <div class="form-group">
+              <label for="signup-confirm-password">
+                Confirm Password
+              </label>
+              <input type="password" id="signup-confirm-password" placeholder="Confirm your password">
+            </div>
+
+            <button type="submit" class="auth-btn">
+              Create Account
+            </button>
+
+          </form>
+
+          <p class="auth-switch">
+            Already have an account?
+            <a href="#login">Login</a>
           </p>
-        </article>
 
-
-        <article class="feature-card">
-          <div class="feature-icon">
-            ◫
-          </div>
-          <h3>
-            Manage Your Budget
-          </h3>
-          <p>
-            Set a monthly budget and keep track
-            of how much you have left.
-          </p>
-        </article>
-
-
-        <article class="feature-card">
-          <div class="feature-icon">
-            ↗
-          </div>
-          <h3>
-            Understand Your Spending
-          </h3>
-          <p>
-            See where your money goes through
-            simple charts and insights.
-          </p>
-        </article>
+        </div>
 
       </div>
 
     </section>
 
-    <section class="how-it-works" id="how-it-works">
+    <!-- LOGIN VIEW-->
+    <section id="login-view" class="view">
 
-      <div class="section-heading">
-        <p>HOW IT WORKS</p>
-        <h2>
-          Start managing your money
-          in three simple steps.
-        </h2>
+      <div class="auth-layout">
+
+        <div class="auth-image">
+          <img src="auth-finance.png" alt="Personal finance workspace">
+        </div>
+
+        <div class="auth-container">
+
+          <div class="auth-header">
+            <p class="auth-tag">WELCOME BACK</p>
+            <h2>Login to SpendWise</h2>
+            <p>
+              Continue managing your expenses and budget.
+            </p>
+          </div>
+
+          <form id="login-form">
+
+            <div class="form-group">
+              <label for="login-email">
+                Email
+              </label>
+              <input type="email" id="login-email" placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+              <label for="login-password">
+                Password
+              </label>
+              <input type="password" id="login-password" placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="auth-btn">
+              Login
+            </button>
+
+          </form>
+
+
+          <p class="auth-switch">
+            Don't have an account?
+            <a href="#signup">
+              Create one
+            </a>
+          </p>
+
+        </div>
+
       </div>
-
-      <div class="steps">
-        <article class="step">
-          <span class="step-number">
-            01
-          </span>
-          <h3>
-            Track
-          </h3>
-          <p>
-            Add your daily expenses
-            with just a few details.
-          </p>
-        </article>
-
-        <article class="step">
-          <span class="step-number">
-            02
-          </span>
-          <h3>
-            Manage
-          </h3>
-          <p>
-            Set your budget and keep
-            an eye on your spending.
-          </p>
-        </article>
-
-
-        <article class="step">
-          <span class="step-number">
-            03
-          </span>
-          <h3>
-            Understand
-          </h3>
-          <p>
-            Use your spending patterns
-            to make better financial decisions.
-          </p>
-        </article>
-
-      </div>
-
     </section>
 
   </main>
-
-  <footer class="footer">
-
-    <div class="footer-logo">
-      SpendWise
-    </div>
-    <p>
-      Simple tools for smarter spending.
-    </p>
-    <p class="copyright">
-      © 2026 SpendWise. All rights reserved.
-    </p>
-
-  </footer>
+  <script src="script.js"></script>
 
 </body>
 
