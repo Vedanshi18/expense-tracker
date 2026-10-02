@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendWise Dashboard</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- APPLICATION -->
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="logo">
+                <img src="logo.png" alt="SpendWise logo">
+                <span>SpendWise</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="sidebar-link active">Dashboard</a>
+                <a href="#expenses" class="sidebar-link">Expenses</a>
+                <a href="#analytics" class="sidebar-link">Analytics</a>
+                <a href="#settings" class="sidebar-link">Settings</a>
+            </nav>
+
+            <button id="logout-btn" class="logout-btn">
+                Logout
+            </button>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="app-main">
+
+            <!-- TOP BAR -->
+            <header class="app-header">
+                <div>
+                    <p class="app-tag">PERSONAL FINANCE</p>
+                    <h1>Dashboard</h1>
+                </div>
+
+                <div class="user-area">
+                    <span id="user-name">User</span>
+                </div>
+            </header>
+
+            <!-- DASHBOARD -->
+            <section id="dashboard-section" class="app-section">
+                <h2>Overview</h2>
+
+                <div class="summary-cards">
+
+                    <div class="summary-card">
+                        <p>Total Spent</p>
+                        <h3 id="total-spent">₹0</h3>
+                    </div>
+
+                    <div class="summary-card">
+                        <p>Monthly Budget</p>
+                        <h3 id="monthly-budget">₹25,000</h3>
+                    </div>
+
+                    <div class="summary-card">
+                        <p>Remaining</p>
+                        <h3 id="remaining-budget">₹25,000</h3>
+                    </div>
+
+                    <div class="summary-card">
+                        <p>Transactions</p>
+                        <h3 id="transaction-count">0</h3>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- EXPENSES -->
+            <section id="expenses-section" class="app-section">
+                <div class="section-top">
+                    <div>
+                        <h2>Expenses</h2>
+                        <p>Track and manage your daily spending.</p>
+                    </div>
+                    <button id="add-expense-btn">+ Add Expense</button>
+                </div>
+
+                <div id="expense-form-container" class="expense-form-container">
+                    <form id="expense-form">
+                        <div class="form-row">
+                            <div class="expense-form-group">
+                                <label for="expense-amount">Amount</label>
+                                <input type="number" id="expense-amount" placeholder="Enter amount" min="1" step="0.01">
+                            </div>
+
+                            <div class="expense-form-group">
+                                <label for="expense-category">Category</label>
+                                <select id="expense-category">
+                                    <option value="">Select category</option>
+                                    <option value="Food">Food</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Bills">Bills</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Health">Health</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="expense-form-group">
+                                <label for="expense-description">Description</label>
+                                <input type="text" id="expense-description" placeholder="e.g. Lunch with friends">
+                            </div>
+
+                            <div class="expense-form-group">
+                                <label for="expense-date">Date</label>
+                                <input type="date" id="expense-date">
+                            </div>
+                        </div>
+
+                        <div class="expense-form-actions">
+                            <button type="submit" class="save-expense-btn">Save Expense</button>
+                            <button type="button" id="cancel-expense-btn" class="cancel-expense-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="expense-list">
+                    <p class="empty-expenses">No expenses added yet.</p>
+                </div>
+            </section>
+
+            <!-- ANALYTICS -->
+            <section id="analytics-section" class="app-section">
+                <h2>Analytics</h2>
+                <p>Spending analytics will appear here.</p>
+            </section>
+
+            <!-- SETTINGS -->
+            <section id="settings-section" class="app-section">
+                <h2>Settings</h2>
+                <p>Application settings will appear here.</p>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
