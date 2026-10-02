@@ -2,11 +2,9 @@
 if (window.location.pathname.endsWith("app.html")) {
 
     const isLoggedIn = localStorage.getItem("isLoggedIn");
-
     if (isLoggedIn !== "true") {
         window.location.href = "index.html#login";
     }
-
 }
 
 function showView(viewName) {
@@ -176,13 +174,13 @@ const cancelExpenseBtn = document.getElementById("cancel-expense-btn");
 const expenseFormContainer = document.getElementById("expense-form-container");
 const expenseForm = document.getElementById("expense-form");
 
-let editingExpenseId = null;
+let editingExpenseId = null; // Variable to track the ID of the expense being edited (diff bw create and edit)
 
 if (addExpenseBtn) {
     addExpenseBtn.addEventListener("click", function() {
         editingExpenseId = null;
         expenseForm.reset();
-        expenseFormContainer.classList.add("show");
+        expenseFormContainer.classList.add("show"); // Show the expense form container when the "Add Expense" button is clicked
     });
 }
 
@@ -190,14 +188,14 @@ if (cancelExpenseBtn) {
     cancelExpenseBtn.addEventListener("click", function() {
         editingExpenseId = null;
         expenseForm.reset();
-        expenseFormContainer.classList.remove("show");
+        expenseFormContainer.classList.remove("show"); // Hide the form container
     });
 }
 
 if (expenseForm) {
     expenseForm.addEventListener("submit", function(event) {
 
-        event.preventDefault();
+        event.preventDefault(); // Prevent the default form submission behavior done by browser
 
         const amount = document.getElementById("expense-amount").value;
         const category = document.getElementById("expense-category").value;
@@ -219,8 +217,8 @@ if (expenseForm) {
 
             if (expenseIndex !== -1) {
                 expenses[expenseIndex] = {
-                    id: editingExpenseId,
-                    amount: Number(amount),
+                    id: editingExpenseId, // Keep the same ID for the updated expense
+                    amount: Number(amount), // Number() is used to convert the string input to a number
                     category: category,
                     description: description,
                     date: date
@@ -233,14 +231,14 @@ if (expenseForm) {
         {
             /* CREATE NEW EXPENSE */
             const expense = {
-                id: Date.now(),
+                id: Date.now(), // Unique ID based on current timestamp
                 amount: Number(amount),
                 category: category,
                 description: description,
                 date: date
             };
 
-            expenses.push(expense);
+            expenses.push(expense); // Add the new expense object to the expenses array
             alert("Expense added successfully!");
         }
         localStorage.setItem("expenses", JSON.stringify(expenses));
@@ -250,11 +248,13 @@ if (expenseForm) {
     });
 }
 
-/* READ EXPENSES */
+/* READ EXPENSES */ 
+// Function to display the list of expenses on the page as HTML 
 const expenseList = document.getElementById("expense-list");
 
 function displayExpenses() {
-    if (!expenseList) {
+    // Check if we are on any other page than app.html, then expenseList will be null, so we need to return from this function
+    if (!expenseList) { 
         return;
     }
     const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
@@ -283,14 +283,14 @@ function displayExpenses() {
                 <button class="delete-expense" data-id="${expense.id}">Delete</button>
             </div>
         `;
-        expenseList.appendChild(expenseItem);
+        expenseList.appendChild(expenseItem); // Shows the expense item on the page by appending it to the expenseList container
     });
 
     const editButtons = document.querySelectorAll(".edit-expense");
 
     editButtons.forEach(function(button) {
         button.addEventListener("click", function() {
-            editExpense(Number(button.dataset.id));
+            editExpense(Number(button.dataset.id)); // Calls the editExpense function with the ID of the expense to be edited when the "Edit" button is clicked
         });
     });
 
@@ -298,24 +298,24 @@ function displayExpenses() {
 
     deleteButtons.forEach(function(button) {
         button.addEventListener("click", function() {
-            deleteExpense(Number(button.dataset.id));
+            deleteExpense(Number(button.dataset.id)); // Calls the deleteExpense function with the ID of the expense to be deleted when the "Delete" button is clicked
         });
     });
 }
-displayExpenses();
+displayExpenses(); // Call the displayExpenses function to show the list of expenses when the page loads
 
 function editExpense(id) {
     const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
     const expense =
-        expenses.find(function(item) {
+        expenses.find(function(item) { // searches for the object with that ID
             return item.id === id;
         });
 
     if (!expense) {
         return;
     }
-    editingExpenseId = id;
+    editingExpenseId = id; // Set the editingExpenseId to the id of the expense being edited
 
     document.getElementById("expense-amount").value = expense.amount;
     document.getElementById("expense-category").value = expense.category;
