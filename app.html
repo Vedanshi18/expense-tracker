@@ -27,6 +27,7 @@
                 <a href="#analytics" class="sidebar-link">Analytics</a>
                 <a href="#settings" class="sidebar-link">Settings</a>
             </nav>
+            
 
             <button id="logout-btn" class="logout-btn">
                 Logout
@@ -41,7 +42,8 @@
             <header class="app-header">
                 <div>
                     <p class="app-tag">PERSONAL FINANCE</p>
-                    <h1>Dashboard</h1>
+                    <h1 id="dashboard-greeting">Hi!</h1>
+                    <p class="dashboard-subtitle">Here's your spending overview.</p>
                 </div>
 
                 <div class="user-area">
@@ -74,18 +76,70 @@
                         <p>Transactions</p>
                         <h3 id="transaction-count">0</h3>
                     </div>
-
                 </div>
+                <div class="dashboard-extra">
+                    <div class="budget-progress-card">
+                        <div class="progress-header">
+                            <div>
+                                <p>Budget Usage</p>
+                                <h3 id="budget-progress-text">₹0 of ₹25,000</h3>
+                            </div>
+                            <span id="budget-percentage">0%</span>
+                        </div>
+                        <p id="budget-status">You're within your budget.</p>
+                        <div class="budget-progress-bar">
+                            <div id="budget-progress-fill"></div>
+                        </div>
+                    </div>
+                    <div class="recent-expenses-card">
+                        <div class="recent-header">
+                            <div>
+                                <p>Recent Expenses</p>
+                                <h3>Your latest spending</h3>
+                            </div>
+                            <a href="#expenses">View all →</a>
+                        </div>
+                        <div id="recent-expenses-list"></div>
+                    </div>
+                </div>
+
+
             </section>
 
             <!-- EXPENSES -->
             <section id="expenses-section" class="app-section">
                 <div class="section-top">
                     <div>
-                        <h2>Expenses</h2>
+                        <h2>Expenses <span id="expense-count-label">0 transactions</span></h2>
                         <p>Track and manage your daily spending.</p>
                     </div>
                     <button id="add-expense-btn">+ Add Expense</button>
+                </div>
+                <div class="expense-controls">
+                    <div class="expense-control">
+                        <label for="category-filter">Category</label>
+                        <select id="category-filter">
+                            <option value="All">All Categories</option>
+                            <option value="Food">Food</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health">Health</option>
+                            <option value="Education">Education</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="expense-control">
+                        <label for="expense-sort">Sort by</label>
+                        <select id="expense-sort">
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="highest">Highest Amount</option>
+                            <option value="lowest">Lowest Amount</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div id="expense-form-container" class="expense-form-container">
@@ -139,13 +193,48 @@
             <!-- ANALYTICS -->
             <section id="analytics-section" class="app-section">
                 <h2>Analytics</h2>
-                <p>Spending analytics will appear here.</p>
+                <p>Understand where your money is going.</p>
+                <div class="analytics-summary">
+                    <div class="analytics-card">
+                        <p>Total Spending</p>
+                        <h3 id="analytics-total">₹0</h3>
+                    </div>
+                    <div class="analytics-card">
+                        <p>Transactions</p>
+                        <h3 id="analytics-transactions">0</h3>
+                    </div>
+                    <div class="analytics-card">
+                        <p>Top Category</p>
+                        <h3 id="analytics-top-category">-</h3>
+                        <span id="analytics-top-category-percentage">0% of spending</span>
+                    </div>
+                </div>
+                <div class="category-breakdown">
+                    <h3>Spending by Category</h3>
+                    <div id="category-list"></div>
+                </div>
             </section>
 
             <!-- SETTINGS -->
             <section id="settings-section" class="app-section">
                 <h2>Settings</h2>
-                <p>Application settings will appear here.</p>
+                <p>Manage your monthly budget.</p>
+                <div class="budget-info">
+                    <div>
+                        <p>Current monthly budget</p>
+                        <h3 id="settings-current-budget">₹25,000</h3>
+                    </div>
+                    <div>
+                        <p>Your budget can be changed anytime.</p>
+                    </div>
+                </div>
+                <form id="budget-form" class="budget-form">
+                    <div class="expense-form-group">
+                        <label for="budget-input">Monthly Budget</label>
+                        <input type="number" id="budget-input" placeholder="Enter monthly budget" min="1" step="0.01">
+                    </div>
+                    <button type="submit" class="save-expense-btn">Save Budget</button>
+                </form>
             </section>
 
         </main>

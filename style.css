@@ -890,6 +890,12 @@ body {
     margin-bottom: 48px;
 }
 
+.dashboard-subtitle {
+    margin-top: 7px;
+    color: #858585;
+    font-size: 14px;
+}
+
 .app-tag {
     margin-bottom: 8px;
     color: #22c55e;
@@ -996,6 +1002,107 @@ body {
     background: rgba(245, 158, 11, 0.06);
 }
 
+.dashboard-extra {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 18px;
+    width: 100%;
+    margin-top: 18px;
+}
+
+.budget-progress-card,
+.recent-expenses-card {
+    padding: 24px;
+    background: #171717;
+    border: 1px solid #292929;
+    border-radius: 13px;
+}
+.progress-header,
+.recent-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+.progress-header p,
+.recent-header p {
+    margin: 0 0 7px;
+    color: #858585;
+    font-size: 13px;
+}
+.progress-header h3,
+.recent-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 17px;
+}
+.progress-header span {
+    color: #22c55e;
+    font-size: 14px;
+    font-weight: 700;
+}
+.budget-progress-bar {
+    width: 100%;
+    height: 8px;
+    margin-top: 22px;
+    background: #292929;
+    border-radius: 10px;
+    overflow: hidden;
+}
+#budget-progress-fill {
+    width: 0;
+    height: 100%;
+    background: #22c55e;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+#budget-status {
+    margin: 12px 0 0;
+    color: #858585;
+    font-size: 12px;
+}
+.recent-header {
+    margin-bottom: 18px;
+}
+.recent-header a {
+    color: #22c55e;
+    font-size: 13px;
+    text-decoration: none;
+}
+.recent-header a:hover {
+    color: #16a34a;
+}
+.recent-expense-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 13px 0;
+    border-top: 1px solid #292929;
+}
+.recent-expense-item h4 {
+    margin: 0 0 4px;
+    color: white;
+    font-size: 13px;
+}
+.recent-expense-item p {
+    margin: 0;
+    color: #777777;
+    font-size: 11px;
+}
+.recent-expense-item > span {
+    flex-shrink: 0;
+    color: #22c55e;
+    font-size: 14px;
+    font-weight: 700;
+}
+.recent-empty {
+    margin: 0;
+    padding: 15px 0;
+    color: #707070;
+    font-size: 13px;
+}
+
 /* EXPENSE SECTION */
 
 .section-top {
@@ -1014,6 +1121,48 @@ body {
     margin: 0;
     color: #858585;
     font-size: 14px;
+}
+
+#expense-count-label {
+    margin-left: 8px;
+    color: #858585;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.expense-controls {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    margin: 20px 0;
+}
+
+.expense-control {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.expense-control label {
+    color: #858585;
+    font-size: 12px;
+}
+
+.expense-control select {
+    min-width: 170px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #292929;
+    border-radius: 8px;
+    background: #171717;
+    color: #ffffff;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+}
+
+.expense-control select:focus {
+    border-color: #22c55e;
 }
 
 /* ADD EXPENSE BUTTON */
@@ -1239,6 +1388,89 @@ body {
     line-height: 1.7;
 }
 
+#analytics-top-category-percentage {
+    display: block;
+    margin-top: 6px;
+    color: #858585;
+    font-size: 12px;
+}
+
+.analytics-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.analytics-card {
+    background: #1a1a1a;
+    border: 1px solid #292929;
+    border-radius: 12px;
+    padding: 22px;
+}
+
+.analytics-card p {
+    margin: 0 0 8px;
+    color: #858585;
+    font-size: 13px;
+}
+
+.analytics-card h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 24px;
+}
+
+.category-breakdown {
+    margin-top: 24px;
+    background: #1a1a1a;
+    border: 1px solid #292929;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.category-breakdown h3 {
+    margin: 0 0 20px;
+    color: #ffffff;
+    font-size: 17px;
+}
+
+.category-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #292929;
+}
+
+.category-item:last-child {
+    border-bottom: none;
+}
+
+.category-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.category-info span:last-child {
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.category-bar {
+    width: 100%;
+    height: 7px;
+    margin-top: 10px;
+    background: #292929;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.category-bar-fill {
+    height: 100%;
+    background: #22c55e;
+    border-radius: 10px;
+}
 /* RESPONSIVE */
 
 @media (max-width: 1100px) {
@@ -1258,23 +1490,36 @@ body {
 }
 
 @media (max-width: 800px) {
+    .app {
+        display: flex;
+        flex-direction: column;
+    }
+
     .sidebar {
         position: relative;
         width: 100%;
         min-height: auto;
-        padding: 18px;
-        border-right: none;
-        border-bottom: 1px solid #292929;
+        display: contents;
     }
 
     .sidebar .logo {
-        margin: 0 4px 20px;
+        order: 1;
+        width: 100%;
+        margin: 0;
+        padding: 18px 18px 12px;
+        background: #171717;
     }
 
     .sidebar-nav {
+        order: 2;
+        width: 100%;
+        display: flex;
         flex-direction: row;
+        gap: 6px;
         overflow-x: auto;
-        padding-bottom: 2px;
+        padding: 0 18px 18px;
+        background: #171717;
+        border-bottom: 1px solid #292929;
     }
 
     .sidebar-link {
@@ -1282,19 +1527,25 @@ body {
         min-height: 42px;
     }
 
-    .logout-btn {
-        width: auto;
-        margin-top: 16px;
-    }
-
-    .app {
-        display: block;
-    }
-
     .app-main {
+        order: 3;
         width: 100%;
         margin-left: 0;
+        min-height: auto;
         padding: 28px 22px 45px;
+    }
+
+    .logout-btn {
+        order: 4;
+        width: 100%;
+        min-height: 44px;
+        margin: 0;
+        padding: 0 18px;
+        border: none;
+        border-top: 1px solid #292929;
+        border-radius: 0;
+        background: #171717;
+        color: #b5b5b5;
     }
 
     .app-header {
@@ -1321,6 +1572,23 @@ body {
 
     .expense-item {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .expense-item {
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .expense-item:hover {
+        transform: translateY(-1px);
+        border-color: #3a3a3a;
+        background: #1a1a1a;
+    }
+    .analytics-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-extra {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1369,4 +1637,4 @@ body {
     #settings-section {
         padding: 22px;
     }
-}
+
