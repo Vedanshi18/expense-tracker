@@ -1638,3 +1638,96 @@ body {
         padding: 22px;
     }
 
+    .dashboard-extra {
+        gap: 14px;
+    }
+    .budget-progress-card,
+    .recent-expenses-card {
+        padding: 20px;
+    }
+
+    .expense-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 18px;
+    }
+    .expense-category {
+        font-size: 12px;
+    }
+    .expense-amount {
+        font-size: 16px;
+    }
+    .expense-actions {
+        justify-content: flex-start;
+    }
+    .expense-actions button {
+        padding: 7px 12px;
+    }
+    .expense-controls {
+    flex-direction: column;
+    align-items: stretch;
+    }
+
+    .expense-control select {
+        width: 100%;
+    }
+
+    #expense-count-label {
+        display: block;
+        margin: 5px 0 0;
+    }
+}
+.budget-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin: 24px 0;
+    padding: 22px;
+    background: #1a1a1a;
+    border: 1px solid #292929;
+    border-radius: 12px;
+}
+
+.budget-info p {
+    margin: 0 0 7px;
+    color: #858585;
+    font-size: 13px;
+}
+
+.budget-info h3 {
+    margin: 0;
+    color: #22c55e;
+    font-size: 24px;
+}
+
+.empty-expense-state {
+    padding: 55px 25px;
+    text-align: center;
+}
+.empty-expense-state h3 {
+    margin: 0 0 8px;
+    color: white;
+    font-size: 17px;
+}
+.empty-expense-state p {
+    margin: 0 auto 20px;
+    max-width: 350px;
+    color: #777777;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.empty-expense-state button {
+    min-height: 40px;
+    padding: 0 17px;
+    border: none;
+    border-radius: 8px;
+    background: #22c55e;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.empty-expense-state button:hover {
+    background: #16a34a;
+}

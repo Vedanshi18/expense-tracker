@@ -447,3 +447,130 @@ function deleteExpense(id) {
   displayExpenses();
 }
 
+/* BUDGET AND DASHBOARD */
+
+const defaultBudget = 25000;
+function getBudget() {
+  return Number(localStorage.getItem("monthlyBudget")) || defaultBudget;
+}
+
+function updateDashboard() {
+  const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+  const budget = getBudget();
+
+  const totalSpent = expenses.reduce(function (total, expense) {
+    return total + expense.amount;
+  }, 0);
+
+  const remaining = budget - totalSpent;
+
+  const totalSpentElement = document.getElementById("total-spent");
+  const monthlyBudgetElement = document.getElementById("monthly-budget");
+  const remainingBudgetElement = document.getElementById("remaining-budget");
+  const transactionCountElement = document.getElementById("transaction-count");
+  const settingsBudgetElement = document.getElementById(
+    "settings-current-budget",
+  );
+
+  if (totalSpentElement) {
+    totalSpentElement.textContent = "₹" + totalSpent.toLocaleString("en-IN");
+  }
+
+  if (monthlyBudgetElement) {
+    monthlyBudgetElement.textContent = "₹" + budget.toLocaleString("en-IN");
+  }
+
+  if (settingsBudgetElement) {
+    settingsBudgetElement.textContent = "₹" + budget.toLocaleString("en-IN");
+  }
+
+  if (remainingBudgetElement) {
+    remainingBudgetElement.textContent =
+      "₹" + remaining.toLocaleString("en-IN");
+  }
+
+  if (transactionCountElement) {
+    transactionCountElement.textContent = expenses.length;
+  }
+
+  const budgetProgressText = document.getElementById("budget-progress-text");
+  const budgetPercentage = document.getElementById("budget-percentage");
+  const budgetProgressFill = document.getElementById("budget-progress-fill");
+  const budgetStatus = document.getElementById("budget-status");
+  const progress = budget > 0 ? (totalSpent / budget) * 100 : 0;
+  const displayedProgress = Math.min(progress, 100);
+
+  if (budgetProgressText) {
+    budgetProgressText.textContent =
+      "₹" +
+      totalSpent.toLocaleString("en-IN") +
+      " of ₹" +
+      budget.toLocaleString("en-IN");
+  }
+  if (budgetPercentage) {
+    budgetPercentage.textContent = Math.round(progress) + "%";
+  }
+  if (budgetProgressFill) {
+    budgetProgressFill.style.width = displayedProgress + "%";
+  }
+  if (budgetStatus) {
+    if (totalSpent > budget) {
+      budgetStatus.textContent = "You've exceeded your budget.";
+      budgetStatus.style.color = "#ef4444";
+    } else if (budget > 0 && totalSpent / budget >= 0.8) {
+      budgetStatus.textContent = "You're approaching your budget limit.";
+      budgetStatus.style.color = "#f59e0b";
+    } else {
+      budgetStatus.textContent = "You're within your budget.";
+      budgetStatus.style.color = "#858585";
+    }
+  }
+  const recentExpensesList = document.getElementById("recent-expenses-list");
+  if (recentExpensesList) {
+    recentExpensesList.innerHTML = "";
+    const recentExpenses = [...expenses]
+      .sort(function (a, b) {
+        return new Date(b.date) - new Date(a.date);
+      })
+      .slice(0, 3);
+    if (recentExpenses.length === 0) {
+      recentExpensesList.innerHTML =
+        '<p class="recent-empty">No expenses yet.</p>';
+    } else {
+      recentExpenses.forEach(function (expense) {
+        const recentItem = document.createElement("div");
+        recentItem.className = "recent-expense-item";
+        recentItem.innerHTML = `
+                <div>
+                    <h4>${expense.description}</h4>
+                   <p>${expense.category} • ${formatExpenseDate(expense.date)}</p> 
+                </div>
+                <span>₹${expense.amount.toLocaleString("en-IN")}</span>
+            `;
+        recentExpensesList.appendChild(recentItem);
+      });
+    }
+  }
+}
+
+const budgetForm = document.getElementById("budget-form");
+const budgetInput = document.getElementById("budget-input");
+
+if (budgetForm) {
+  budgetInput.value = getBudget();
+  budgetForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const budget = Number(budgetInput.value);
+
+    if (budget <= 0) {
+      alert("Please enter a valid budget.");
+      return;
+    }
+
+    localStorage.setItem("monthlyBudget", budget);
+    alert("Budget saved successfully!");
+    updateDashboard();
+    updateAnalytics();
+  });
+}
+
