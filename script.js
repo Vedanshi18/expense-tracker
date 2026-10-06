@@ -574,3 +574,76 @@ if (budgetForm) {
   });
 }
 
+/* ANALYTICS */
+
+function updateAnalytics() {
+  const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+  const total = expenses.reduce(function (sum, expense) {
+    return sum + expense.amount;
+  }, 0);
+  const categoryTotals = {};
+  expenses.forEach(function (expense) {
+    if (categoryTotals[expense.category]) {
+      categoryTotals[expense.category] += expense.amount;
+    } else {
+      categoryTotals[expense.category] = expense.amount;
+    }
+  });
+  let topCategory = "-";
+  let highestAmount = 0;
+  for (const category in categoryTotals) {
+    if (categoryTotals[category] > highestAmount) {
+      highestAmount = categoryTotals[category];
+      topCategory = category;
+    }
+  }
+  const analyticsTotal = document.getElementById("analytics-total");
+  const analyticsTransactions = document.getElementById(
+    "analytics-transactions",
+  );
+  const analyticsTopCategory = document.getElementById(
+    "analytics-top-category",
+  );
+  const analyticsTopCategoryPercentage = document.getElementById(
+    "analytics-top-category-percentage",
+  );
+  if (analyticsTotal) {
+    analyticsTotal.textContent = "₹" + total.toLocaleString("en-IN");
+  }
+  if (analyticsTransactions) {
+    analyticsTransactions.textContent = expenses.length;
+  }
+  if (analyticsTopCategory) {
+    analyticsTopCategory.textContent = topCategory;
+  }
+  if (analyticsTopCategoryPercentage) {
+    const topPercentage = total > 0 ? (highestAmount / total) * 100 : 0;
+    analyticsTopCategoryPercentage.textContent =
+      topCategory === "-"
+        ? "0% of spending"
+        : Math.round(topPercentage) + "% of spending";
+  }
+  const categoryList = document.getElementById("category-list");
+  if (categoryList) {
+    categoryList.innerHTML = "";
+    for (const category in categoryTotals) {
+      const categoryItem = document.createElement("div");
+      categoryItem.className = "category-item";
+      const percentage =
+        total > 0 ? (categoryTotals[category] / total) * 100 : 0;
+      categoryItem.innerHTML = `
+        <div class="category-info">
+            <span>${category}</span>
+            <span>₹${categoryTotals[category].toLocaleString("en-IN")} · ${Math.round(percentage)}%</span>
+        </div>
+        <div class="category-bar">
+            <div class="category-bar-fill" style="width: ${percentage}%"></div>
+        </div>
+    `;
+      categoryList.appendChild(categoryItem);
+    }
+  }
+}
+
+// updateAnalytics();
+displayExpenses(); // Call the displayExpenses function to show the list of expenses when the page loads
