@@ -210,6 +210,16 @@ if (storedUser) {
   }
 }
 
+class Expense {
+  constructor(id, amount, category, description, date) {
+    this.id = id;
+    this.amount = amount;
+    this.category = category;
+    this.description = description;
+    this.date = date;
+  }
+}
+
 /* EXPENSE MANAGEMENT */
 
 const addExpenseBtn = document.getElementById("add-expense-btn");
@@ -261,25 +271,25 @@ if (expenseForm) {
       });
 
       if (expenseIndex !== -1) {
-        expenses[expenseIndex] = {
-          id: editingExpenseId, // Keep the same ID for the updated expense
-          amount: Number(amount), // Number() is used to convert the string input to a number
-          category: category,
-          description: description,
-          date: date,
-        };
+        expenses[expenseIndex] = new Expense(
+          editingExpenseId, // Keep the same ID for the updated expense
+          Number(amount), // Number() is used to convert the string input to a number
+          category,
+          description,
+          date,
+        );
       }
       alert("Expense updated successfully!");
       editingExpenseId = null;
     } else {
       /* CREATE NEW EXPENSE */
-      const expense = {
-        id: Date.now(), // Unique ID based on current timestamp
-        amount: Number(amount),
-        category: category,
-        description: description,
-        date: date,
-      };
+      const expense = new Expense(
+        Date.now(), // Unique ID based on current timestamp
+        Number(amount),
+        category,
+        description,
+        date,
+      );
 
       expenses.push(expense); // Add the new expense object to the expenses array
       alert("Expense added successfully!");
