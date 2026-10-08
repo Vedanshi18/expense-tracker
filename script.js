@@ -387,7 +387,7 @@ function displayExpenses() {
                 <h4>${expense.description}</h4>
                 <p>${formatExpenseDate(expense.date)}</p>
             </div>
-            <div class="expense-category">${expense.category}</div>
+            <div class="expense-category category-${expense.category.toLowerCase()}">${expense.category}</div>
             <div class="expense-amount">₹${expense.amount.toLocaleString("en-IN")}</div>
             <div class="expense-actions">
                 <button class="edit-expense" data-id="${expense.id}">Edit</button>
@@ -638,7 +638,7 @@ function updateAnalytics() {
     categoryList.innerHTML = "";
     for (const category in categoryTotals) {
       const categoryItem = document.createElement("div");
-      categoryItem.className = "category-item";
+      categoryItem.className = "category-item category-" + category.toLowerCase();
       const percentage =
         total > 0 ? (categoryTotals[category] / total) * 100 : 0;
       categoryItem.innerHTML = `

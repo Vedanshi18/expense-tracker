@@ -1731,3 +1731,116 @@ body {
 .empty-expense-state button:hover {
     background: #16a34a;
 }
+
+/* FINAL UI POLISH */
+
+/* CATEGORY COLORS */
+.category-food .category-bar-fill {
+    background: #22c55e;
+}
+.category-shopping .category-bar-fill {
+    background: #a78bfa;
+}
+.category-health .category-bar-fill {
+    background: #38bdf8;
+}
+.category-travel .category-bar-fill {
+    background: #f59e0b;
+}
+.category-entertainment .category-bar-fill {
+    background: #f472b6;
+}
+.category-bills .category-bar-fill {
+    background: #ef4444;
+}
+.category-education .category-bar-fill {
+    background: #06b6d4;
+}
+.category-other .category-bar-fill {
+    background: #9ca3af;
+}
+
+/* EXPENSE CATEGORY BADGES */
+.expense-category {
+    border: 1px solid #333333;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.expense-category.category-food {
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.08);
+}
+.expense-category.category-shopping {
+    color: #a78bfa;
+    border-color: rgba(167, 139, 250, 0.35);
+    background: rgba(167, 139, 250, 0.08);
+}
+.expense-category.category-health {
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.35);
+    background: rgba(56, 189, 248, 0.08);
+}
+.expense-category.category-travel {
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.35);
+    background: rgba(245, 158, 11, 0.08);
+}
+.expense-category.category-entertainment {
+    color: #f472b6;
+    border-color: rgba(244, 114, 182, 0.35);
+    background: rgba(244, 114, 182, 0.08);
+}
+.expense-category.category-bills {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+}
+.expense-category.category-education {
+    color: #06b6d4;
+    border-color: rgba(6, 182, 212, 0.35);
+    background: rgba(6, 182, 212, 0.08);
+}
+.expense-category.category-other {
+    color: #9ca3af;
+    border-color: rgba(156, 163, 175, 0.35);
+    background: rgba(156, 163, 175, 0.08);
+}
+
+/* SIDEBAR NAVIGATION */
+.sidebar-link {
+    font-size: 15px;
+    font-weight: 600;
+}
+.sidebar-link.active {
+    color: #111111;
+    font-weight: 700;
+}
+
+/* DASHBOARD SUMMARY CARDS */
+.summary-card {
+    border-top: 2px solid #22c55e;
+}
+.summary-card:nth-child(2) {
+    border-top-color: #38bdf8;
+}
+.summary-card:nth-child(3) {
+    border-top-color: #a78bfa;
+}
+.summary-card:nth-child(4) {
+    border-top-color: #f59e0b;
+}
+.summary-card:nth-child(1) h3 {
+    color: #4ade80;
+}
+.summary-card:nth-child(2) h3 {
+    color: #7dd3fc;
+}
+.summary-card:nth-child(3) h3 {
+    color: #c4b5fd;
+}
+.summary-card:nth-child(4) h3 {
+    color: #fbbf24;
+}
