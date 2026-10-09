@@ -586,6 +586,16 @@ if (budgetForm) {
 
 /* ANALYTICS */
 
+const categoryColors = {
+  Food: "#22c55e",
+  Shopping: "#a78bfa",
+  Health: "#38bdf8",
+  Travel: "#f59e0b",
+  Entertainment: "#f472b6",
+  Bills: "#ef4444",
+  Education: "#2f8d9e",
+  Other: "#9ca3af",
+};
 function updateAnalytics() {
   const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
   const total = expenses.reduce(function (sum, expense) {
@@ -599,6 +609,46 @@ function updateAnalytics() {
       categoryTotals[expense.category] = expense.amount;
     }
   });
+  // PIE CHART
+  const donutChart = document.getElementById("donut-chart");
+  const donutTotal = document.getElementById("donut-total");
+  const donutLegend = document.getElementById("donut-legend");
+
+  if (donutChart && donutTotal && donutLegend) {
+    donutTotal.textContent = "₹" + total.toLocaleString("en-IN");
+    donutLegend.innerHTML = "";
+
+    const categories = Object.keys(categoryTotals);
+    let currentAngle = 0;
+    const slices = [];
+
+    categories.forEach(function (category) {
+      const percentage =
+        total > 0 ? (categoryTotals[category] / total) * 100 : 0;
+      const angle = percentage * 3.6;
+      const color = categoryColors[category] || categoryColors.Other;
+
+      if (angle > 0) {
+        slices.push(
+          color + " " + currentAngle + "deg " + (currentAngle + angle) + "deg",
+        );
+        currentAngle += angle;
+      }
+
+      const legendItem = document.createElement("div");
+      legendItem.className = "donut-legend-item";
+      legendItem.innerHTML = `
+            <span class="donut-legend-color" style="background:${color}"></span>
+            <span>${category} · ${Math.round(percentage)}%</span>
+            <span>₹${categoryTotals[category].toLocaleString("en-IN")}</span>
+        `;
+      donutLegend.appendChild(legendItem);
+    });
+
+    donutChart.style.background = slices.length
+      ? "conic-gradient(" + slices.join(", ") + ")"
+      : "conic-gradient(#292929 0deg 360deg)";
+  }
   let topCategory = "-";
   let highestAmount = 0;
   for (const category in categoryTotals) {
@@ -638,7 +688,8 @@ function updateAnalytics() {
     categoryList.innerHTML = "";
     for (const category in categoryTotals) {
       const categoryItem = document.createElement("div");
-      categoryItem.className = "category-item category-" + category.toLowerCase();
+      categoryItem.className =
+        "category-item category-" + category.toLowerCase();
       const percentage =
         total > 0 ? (categoryTotals[category] / total) * 100 : 0;
       categoryItem.innerHTML = `

@@ -27,7 +27,7 @@
                 <a href="#analytics" class="sidebar-link">Analytics</a>
                 <a href="#settings" class="sidebar-link">Settings</a>
             </nav>
-            
+
 
             <button id="logout-btn" class="logout-btn">
                 Logout
@@ -208,10 +208,23 @@
                         <span id="analytics-top-category-percentage">0% of spending</span>
                     </div>
                 </div>
-                <div class="category-breakdown">
-                    <h3>Spending by Category</h3>
-                    <div id="category-list"></div>
+                <div class="analytics-visuals">
+                    <div class="donut-card">
+                        <h3>Spending Distribution</h3>
+                        <div class="donut-chart" id="donut-chart">
+                            <div class="donut-center">
+                                <span>Total Spending</span>
+                                <h3 id="donut-total">₹0</h3>
+                            </div>
+                        </div>
+                        <div id="donut-legend"></div>
+                    </div>
+                    <div class="category-breakdown">
+                        <h3>Spending by Category</h3>
+                        <div id="category-list"></div>
+                    </div>
                 </div>
+
             </section>
 
             <!-- SETTINGS -->
