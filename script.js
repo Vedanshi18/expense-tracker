@@ -210,6 +210,149 @@ if (storedUser) {
   }
 }
 
+function readStorageJSON(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    if (value === null || value === undefined || value === "") {
+      return fallback;
+    }
+    const parsedValue = JSON.parse(value);
+    return parsedValue === null ? fallback : parsedValue;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function formatMonthKey(dateValue) {
+  const date = dateValue instanceof Date ? dateValue : new Date(dateValue + "T00:00:00");
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  return year + "-" + month;
+}
+
+function parseDateString(dateString) {
+  if (!dateString || typeof dateString !== "string") {
+    return new Date(NaN);
+  }
+
+  const trimmedValue = dateString.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
+    return new Date(NaN);
+  }
+
+  const [year, month, day] = trimmedValue.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function getCurrentMonthKey() {
+  return formatMonthKey(new Date());
+}
+
+function getMonthLabel(monthKey) {
+  if (!monthKey || !/^\d{4}-\d{2}$/.test(monthKey)) {
+    return "This Month";
+  }
+
+  const [year, month] = monthKey.split("-").map(Number);
+  return new Date(year, month - 1, 1).toLocaleDateString("en-IN", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function getSelectedMonthKey() {
+  const currentMonthKey = getCurrentMonthKey();
+  const savedMonth = localStorage.getItem("selectedMonth");
+
+  if (!savedMonth || !/^\d{4}-\d{2}$/.test(savedMonth)) {
+    return currentMonthKey;
+  }
+
+  return savedMonth <= currentMonthKey ? savedMonth : currentMonthKey;
+}
+
+function setSelectedMonthKey(monthKey) {
+  const currentMonthKey = getCurrentMonthKey();
+
+  if (!monthKey || !/^\d{4}-\d{2}$/.test(monthKey)) {
+    return;
+  }
+
+  if (monthKey <= currentMonthKey) {
+    localStorage.setItem("selectedMonth", monthKey);
+  }
+}
+
+function getMonthKeyFromExpense(dateString) {
+  const parsedDate = parseDateString(dateString);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return getCurrentMonthKey();
+  }
+  return formatMonthKey(parsedDate);
+}
+
+function getBudgetForMonth(monthKey) {
+  const budgets = readStorageJSON("monthlyBudgets", {});
+  const selectedKey = monthKey || getSelectedMonthKey();
+  return Number(budgets[selectedKey]) || defaultBudget;
+}
+
+function saveBudgetForMonth(monthKey, budgetValue) {
+  const budgets = readStorageJSON("monthlyBudgets", {});
+  budgets[monthKey] = Number(budgetValue);
+  localStorage.setItem("monthlyBudgets", JSON.stringify(budgets));
+}
+
+function migrateLegacyBudgetStorage() {
+  const budgets = readStorageJSON("monthlyBudgets", {});
+  const currentMonthKey = getCurrentMonthKey();
+  const legacyBudget = Number(localStorage.getItem("monthlyBudget"));
+
+  if (Number.isFinite(legacyBudget) && legacyBudget > 0 && !budgets[currentMonthKey]) {
+    budgets[currentMonthKey] = legacyBudget;
+    localStorage.setItem("monthlyBudgets", JSON.stringify(budgets));
+  }
+
+  if (!localStorage.getItem("monthlyBudgets") && Number.isFinite(legacyBudget) && legacyBudget > 0) {
+    localStorage.setItem("monthlyBudgets", JSON.stringify({ [currentMonthKey]: legacyBudget }));
+  }
+
+  if (!localStorage.getItem("selectedMonth")) {
+    localStorage.setItem("selectedMonth", currentMonthKey);
+  }
+}
+
+function renderMonthSelectors() {
+  const selectedMonthKey = getSelectedMonthKey();
+  const currentMonthKey = getCurrentMonthKey();
+  const monthLabels = document.querySelectorAll(".month-label");
+  monthLabels.forEach(function (label) {
+    label.textContent = getMonthLabel(selectedMonthKey);
+  });
+
+  const budgetInput = document.getElementById("budget-input");
+  if (budgetInput) {
+    budgetInput.value = getBudgetForMonth(selectedMonthKey);
+  }
+
+  document.querySelectorAll(".month-nav-btn").forEach(function (button) {
+    const direction = button.dataset.monthNav;
+    const isDisabled = direction === "next" && selectedMonthKey >= currentMonthKey;
+    button.disabled = isDisabled;
+  });
+
+  document.querySelectorAll(".current-month-btn").forEach(function (button) {
+    button.disabled = selectedMonthKey === currentMonthKey;
+  });
+}
+
+function refreshMonthDependentData() {
+  renderMonthSelectors();
+  updateDashboard();
+  updateAnalytics();
+  displayExpenses();
+}
+
 class Expense {
   constructor(id, amount, category, description, date) {
     this.id = id;
@@ -312,40 +455,50 @@ function formatExpenseDate(dateString) {
 // Function to display the list of expenses on the page as HTML
 const expenseList = document.getElementById("expense-list");
 function displayExpenses() {
-  // Check if we are on any other page than app.html, then expenseList will be null, so we need to return from this function
   if (!expenseList) {
     return;
   }
-  const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+  const expenses = readStorageJSON("expenses", []);
   const selectedCategory = categoryFilter
     ? categoryFilter.value.trim().toLowerCase()
     : "all";
   const selectedSort = expenseSort ? expenseSort.value : "newest";
+  const monthViewFilter = document.getElementById("month-view-filter");
+  const activeView = monthViewFilter ? monthViewFilter.value : "selected";
+  const selectedMonthKey = getSelectedMonthKey();
 
   let filteredExpenses = expenses.filter(function (expense) {
-    return (
+    const matchesSelectedMonth =
+      activeView === "all" || getMonthKeyFromExpense(expense.date) === selectedMonthKey;
+
+    const matchesCategory =
       selectedCategory === "all" ||
-      expense.category.trim().toLowerCase() === selectedCategory
-    );
+      String(expense.category).trim().toLowerCase() === selectedCategory;
+
+    return matchesSelectedMonth && matchesCategory;
   });
+
   filteredExpenses.sort(function (a, b) {
     if (selectedSort === "oldest") {
-      return new Date(a.date) - new Date(b.date);
+      return parseDateString(a.date) - parseDateString(b.date);
     }
     if (selectedSort === "highest") {
-      return b.amount - a.amount;
+      return Number(b.amount) - Number(a.amount);
     }
     if (selectedSort === "lowest") {
-      return a.amount - b.amount;
+      return Number(a.amount) - Number(b.amount);
     }
-    return new Date(b.date) - new Date(a.date);
+    return parseDateString(b.date) - parseDateString(a.date);
   });
+
   const expenseCountLabel = document.getElementById("expense-count-label");
   if (expenseCountLabel) {
     const count = filteredExpenses.length;
     expenseCountLabel.textContent =
       count + (count === 1 ? " transaction" : " transactions");
   }
+
   if (expenses.length === 0) {
     expenseList.innerHTML = `
             <div class="empty-expense-state">
@@ -366,58 +519,95 @@ function displayExpenses() {
     updateAnalytics();
     return;
   }
+
   if (filteredExpenses.length === 0) {
+    const emptyMessage =
+      activeView === "all"
+        ? "No expenses match your current filters."
+        : "No expenses recorded for " + getMonthLabel(selectedMonthKey) + ".";
+
     expenseList.innerHTML = `
             <div class="empty-expense-state">
                 <h3>No matching expenses</h3>
-                <p>Try changing the category or sorting options.</p>
+                <p>${emptyMessage}</p>
             </div>
         `;
     updateDashboard();
     updateAnalytics();
     return;
   }
+
   expenseList.innerHTML = "";
   filteredExpenses.forEach(function (expense) {
     const expenseItem = document.createElement("div");
     expenseItem.className = "expense-item";
-    // Template literal to create the HTML structure
     expenseItem.innerHTML = `
             <div>
                 <h4>${expense.description}</h4>
                 <p>${formatExpenseDate(expense.date)}</p>
             </div>
-            <div class="expense-category category-${expense.category.toLowerCase()}">${expense.category}</div>
-            <div class="expense-amount">₹${expense.amount.toLocaleString("en-IN")}</div>
+            <div class="expense-category category-${String(expense.category).toLowerCase()}">${expense.category}</div>
+            <div class="expense-amount">₹${Number(expense.amount).toLocaleString("en-IN")}</div>
             <div class="expense-actions">
                 <button class="edit-expense" data-id="${expense.id}">Edit</button>
                 <button class="delete-expense" data-id="${expense.id}">Delete</button>
             </div>
         `;
-    expenseList.appendChild(expenseItem); // Shows the expense item on the page by appending it to the expenseList container
+    expenseList.appendChild(expenseItem);
   });
+
   const editButtons = document.querySelectorAll(".edit-expense");
   editButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      editExpense(Number(button.dataset.id)); // Calls the editExpense function with the ID of the expense to be edited when the "Edit" button is clicked
+      editExpense(Number(button.dataset.id));
     });
   });
+
   const deleteButtons = document.querySelectorAll(".delete-expense");
   deleteButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      deleteExpense(Number(button.dataset.id)); // Calls the deleteExpense function with the ID of the expense to be deleted when the "Delete" button is clicked
+      deleteExpense(Number(button.dataset.id));
     });
   });
+
   updateDashboard();
   updateAnalytics();
 }
-// Filter/sort event listeners
+
 if (categoryFilter) {
   categoryFilter.addEventListener("change", displayExpenses);
 }
 if (expenseSort) {
   expenseSort.addEventListener("change", displayExpenses);
 }
+if (document.getElementById("month-view-filter")) {
+  document.getElementById("month-view-filter").addEventListener("change", displayExpenses);
+}
+
+const monthNavigationButtons = document.querySelectorAll(".month-nav-btn");
+monthNavigationButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    const direction = button.dataset.monthNav;
+    const currentMonthKey = getCurrentMonthKey();
+    const selectedMonthKey = getSelectedMonthKey();
+    const [year, month] = selectedMonthKey.split("-").map(Number);
+    const date = new Date(year, month - 1, 1);
+    date.setMonth(date.getMonth() + (direction === "next" ? 1 : -1));
+
+    const nextMonthKey = formatMonthKey(date);
+    if (nextMonthKey <= currentMonthKey) {
+      setSelectedMonthKey(nextMonthKey);
+      refreshMonthDependentData();
+    }
+  });
+});
+
+document.querySelectorAll(".current-month-btn").forEach(function (button) {
+  button.addEventListener("click", function () {
+    setSelectedMonthKey(getCurrentMonthKey());
+    refreshMonthDependentData();
+  });
+});
 
 function editExpense(id) {
   const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
@@ -460,16 +650,20 @@ function deleteExpense(id) {
 /* BUDGET AND DASHBOARD */
 
 const defaultBudget = 25000;
-function getBudget() {
-  return Number(localStorage.getItem("monthlyBudget")) || defaultBudget;
+
+function getBudget(monthKey) {
+  return getBudgetForMonth(monthKey || getSelectedMonthKey());
 }
 
 function updateDashboard() {
-  const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-  const budget = getBudget();
-
-  const totalSpent = expenses.reduce(function (total, expense) {
-    return total + expense.amount;
+  const expenses = readStorageJSON("expenses", []);
+  const selectedMonthKey = getSelectedMonthKey();
+  const monthExpenses = expenses.filter(function (expense) {
+    return getMonthKeyFromExpense(expense.date) === selectedMonthKey;
+  });
+  const budget = getBudget(selectedMonthKey);
+  const totalSpent = monthExpenses.reduce(function (total, expense) {
+    return total + Number(expense.amount);
   }, 0);
 
   const remaining = budget - totalSpent;
@@ -478,9 +672,12 @@ function updateDashboard() {
   const monthlyBudgetElement = document.getElementById("monthly-budget");
   const remainingBudgetElement = document.getElementById("remaining-budget");
   const transactionCountElement = document.getElementById("transaction-count");
-  const settingsBudgetElement = document.getElementById(
-    "settings-current-budget",
-  );
+  const settingsBudgetElement = document.getElementById("settings-current-budget");
+  const budgetProgressText = document.getElementById("budget-progress-text");
+  const budgetPercentage = document.getElementById("budget-percentage");
+  const budgetProgressFill = document.getElementById("budget-progress-fill");
+  const budgetStatus = document.getElementById("budget-status");
+  const recentExpensesList = document.getElementById("recent-expenses-list");
 
   if (totalSpentElement) {
     totalSpentElement.textContent = "₹" + totalSpent.toLocaleString("en-IN");
@@ -495,27 +692,19 @@ function updateDashboard() {
   }
 
   if (remainingBudgetElement) {
-    remainingBudgetElement.textContent =
-      "₹" + remaining.toLocaleString("en-IN");
+    remainingBudgetElement.textContent = "₹" + remaining.toLocaleString("en-IN");
   }
 
   if (transactionCountElement) {
-    transactionCountElement.textContent = expenses.length;
+    transactionCountElement.textContent = monthExpenses.length;
   }
 
-  const budgetProgressText = document.getElementById("budget-progress-text");
-  const budgetPercentage = document.getElementById("budget-percentage");
-  const budgetProgressFill = document.getElementById("budget-progress-fill");
-  const budgetStatus = document.getElementById("budget-status");
   const progress = budget > 0 ? (totalSpent / budget) * 100 : 0;
   const displayedProgress = Math.min(progress, 100);
 
   if (budgetProgressText) {
     budgetProgressText.textContent =
-      "₹" +
-      totalSpent.toLocaleString("en-IN") +
-      " of ₹" +
-      budget.toLocaleString("en-IN");
+      "₹" + totalSpent.toLocaleString("en-IN") + " of ₹" + budget.toLocaleString("en-IN");
   }
   if (budgetPercentage) {
     budgetPercentage.textContent = Math.round(progress) + "%";
@@ -535,17 +724,17 @@ function updateDashboard() {
       budgetStatus.style.color = "#858585";
     }
   }
-  const recentExpensesList = document.getElementById("recent-expenses-list");
+
   if (recentExpensesList) {
     recentExpensesList.innerHTML = "";
-    const recentExpenses = [...expenses]
+    const recentExpenses = [...monthExpenses]
       .sort(function (a, b) {
-        return new Date(b.date) - new Date(a.date);
+        return parseDateString(b.date) - parseDateString(a.date);
       })
       .slice(0, 3);
+
     if (recentExpenses.length === 0) {
-      recentExpensesList.innerHTML =
-        '<p class="recent-empty">No expenses yet.</p>';
+      recentExpensesList.innerHTML = '<p class="recent-empty">No expenses yet.</p>';
     } else {
       recentExpenses.forEach(function (expense) {
         const recentItem = document.createElement("div");
@@ -553,9 +742,9 @@ function updateDashboard() {
         recentItem.innerHTML = `
                 <div>
                     <h4>${expense.description}</h4>
-                   <p>${expense.category} • ${formatExpenseDate(expense.date)}</p> 
+                   <p>${expense.category} • ${formatExpenseDate(expense.date)}</p>
                 </div>
-                <span>₹${expense.amount.toLocaleString("en-IN")}</span>
+                <span>₹${Number(expense.amount).toLocaleString("en-IN")}</span>
             `;
         recentExpensesList.appendChild(recentItem);
       });
@@ -567,20 +756,25 @@ const budgetForm = document.getElementById("budget-form");
 const budgetInput = document.getElementById("budget-input");
 
 if (budgetForm) {
-  budgetInput.value = getBudget();
+  if (budgetInput) {
+    budgetInput.value = getBudget();
+  }
+
   budgetForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const budget = Number(budgetInput.value);
+    const selectedMonthKey = getSelectedMonthKey();
 
     if (budget <= 0) {
       alert("Please enter a valid budget.");
       return;
     }
 
-    localStorage.setItem("monthlyBudget", budget);
-    alert("Budget saved successfully!");
+    saveBudgetForMonth(selectedMonthKey, budget);
+    alert("Budget saved successfully for " + getMonthLabel(selectedMonthKey) + ".");
     updateDashboard();
     updateAnalytics();
+    renderMonthSelectors();
   });
 }
 
@@ -597,19 +791,21 @@ const categoryColors = {
   Other: "#9ca3af",
 };
 function updateAnalytics() {
-  const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-  const total = expenses.reduce(function (sum, expense) {
-    return sum + expense.amount;
+  const expenses = readStorageJSON("expenses", []);
+  const selectedMonthKey = getSelectedMonthKey();
+  const selectedMonthExpenses = expenses.filter(function (expense) {
+    return getMonthKeyFromExpense(expense.date) === selectedMonthKey;
+  });
+  const total = selectedMonthExpenses.reduce(function (sum, expense) {
+    return sum + Number(expense.amount);
   }, 0);
   const categoryTotals = {};
-  expenses.forEach(function (expense) {
-    if (categoryTotals[expense.category]) {
-      categoryTotals[expense.category] += expense.amount;
-    } else {
-      categoryTotals[expense.category] = expense.amount;
-    }
+
+  selectedMonthExpenses.forEach(function (expense) {
+    const category = expense.category;
+    categoryTotals[category] = (categoryTotals[category] || 0) + Number(expense.amount);
   });
-  // PIE CHART
+
   const donutChart = document.getElementById("donut-chart");
   const donutTotal = document.getElementById("donut-total");
   const donutLegend = document.getElementById("donut-legend");
@@ -619,59 +815,59 @@ function updateAnalytics() {
     donutLegend.innerHTML = "";
 
     const categories = Object.keys(categoryTotals);
-    let currentAngle = 0;
-    const slices = [];
+    if (categories.length === 0) {
+      donutChart.style.background = "conic-gradient(#292929 0deg 360deg)";
+      donutLegend.innerHTML = '<div class="empty-chart-message">No expenses recorded for this month.</div>';
+    } else {
+      let currentAngle = 0;
+      const slices = [];
 
-    categories.forEach(function (category) {
-      const percentage =
-        total > 0 ? (categoryTotals[category] / total) * 100 : 0;
-      const angle = percentage * 3.6;
-      const color = categoryColors[category] || categoryColors.Other;
+      categories.forEach(function (category) {
+        const percentage = total > 0 ? (categoryTotals[category] / total) * 100 : 0;
+        const angle = percentage * 3.6;
+        const color = categoryColors[category] || categoryColors.Other;
 
-      if (angle > 0) {
-        slices.push(
-          color + " " + currentAngle + "deg " + (currentAngle + angle) + "deg",
-        );
-        currentAngle += angle;
-      }
+        if (angle > 0) {
+          slices.push(color + " " + currentAngle + "deg " + (currentAngle + angle) + "deg");
+          currentAngle += angle;
+        }
 
-      const legendItem = document.createElement("div");
-      legendItem.className = "donut-legend-item";
-      legendItem.innerHTML = `
+        const legendItem = document.createElement("div");
+        legendItem.className = "donut-legend-item";
+        legendItem.innerHTML = `
             <span class="donut-legend-color" style="background:${color}"></span>
             <span>${category} · ${Math.round(percentage)}%</span>
             <span>₹${categoryTotals[category].toLocaleString("en-IN")}</span>
         `;
-      donutLegend.appendChild(legendItem);
-    });
+        donutLegend.appendChild(legendItem);
+      });
 
-    donutChart.style.background = slices.length
-      ? "conic-gradient(" + slices.join(", ") + ")"
-      : "conic-gradient(#292929 0deg 360deg)";
+      donutChart.style.background = slices.length
+        ? "conic-gradient(" + slices.join(", ") + ")"
+        : "conic-gradient(#292929 0deg 360deg)";
+    }
   }
+
   let topCategory = "-";
   let highestAmount = 0;
+
   for (const category in categoryTotals) {
     if (categoryTotals[category] > highestAmount) {
       highestAmount = categoryTotals[category];
       topCategory = category;
     }
   }
+
   const analyticsTotal = document.getElementById("analytics-total");
-  const analyticsTransactions = document.getElementById(
-    "analytics-transactions",
-  );
-  const analyticsTopCategory = document.getElementById(
-    "analytics-top-category",
-  );
-  const analyticsTopCategoryPercentage = document.getElementById(
-    "analytics-top-category-percentage",
-  );
+  const analyticsTransactions = document.getElementById("analytics-transactions");
+  const analyticsTopCategory = document.getElementById("analytics-top-category");
+  const analyticsTopCategoryPercentage = document.getElementById("analytics-top-category-percentage");
+
   if (analyticsTotal) {
     analyticsTotal.textContent = "₹" + total.toLocaleString("en-IN");
   }
   if (analyticsTransactions) {
-    analyticsTransactions.textContent = expenses.length;
+    analyticsTransactions.textContent = selectedMonthExpenses.length;
   }
   if (analyticsTopCategory) {
     analyticsTopCategory.textContent = topCategory;
@@ -683,28 +879,147 @@ function updateAnalytics() {
         ? "0% of spending"
         : Math.round(topPercentage) + "% of spending";
   }
+
   const categoryList = document.getElementById("category-list");
   if (categoryList) {
     categoryList.innerHTML = "";
-    for (const category in categoryTotals) {
-      const categoryItem = document.createElement("div");
-      categoryItem.className =
-        "category-item category-" + category.toLowerCase();
-      const percentage =
-        total > 0 ? (categoryTotals[category] / total) * 100 : 0;
-      categoryItem.innerHTML = `
-        <div class="category-info">
-            <span>${category}</span>
-            <span>₹${categoryTotals[category].toLocaleString("en-IN")} · ${Math.round(percentage)}%</span>
-        </div>
-        <div class="category-bar">
-            <div class="category-bar-fill" style="width: ${percentage}%"></div>
-        </div>
-    `;
-      categoryList.appendChild(categoryItem);
+
+    if (Object.keys(categoryTotals).length === 0) {
+      categoryList.innerHTML = '<div class="empty-chart-message">No category data for this month.</div>';
+    } else {
+      for (const category in categoryTotals) {
+        const categoryItem = document.createElement("div");
+        categoryItem.className = "category-item category-" + category.toLowerCase();
+        const percentage = total > 0 ? (categoryTotals[category] / total) * 100 : 0;
+        categoryItem.innerHTML = `
+          <div class="category-info">
+              <span>${category}</span>
+              <span>₹${categoryTotals[category].toLocaleString("en-IN")} · ${Math.round(percentage)}%</span>
+          </div>
+          <div class="category-bar">
+              <div class="category-bar-fill" style="width: ${percentage}%"></div>
+          </div>
+      `;
+        categoryList.appendChild(categoryItem);
+      }
     }
   }
+
+  updateTimeAnalytics();
 }
 
-// updateAnalytics();
-displayExpenses(); // Call the displayExpenses function to show the list of expenses when the page loads
+/* TIME-BASED ANALYTICS */
+function renderTrendChart(containerId, periods, expenses, colorClass) {
+  const chart = document.getElementById(containerId);
+  if (!chart) return;
+
+  const totals = periods.map(function (period) {
+    return expenses.reduce(function (sum, expense) {
+      const date = parseDateString(expense.date);
+      return period.matches(date) ? sum + Number(expense.amount) : sum;
+    }, 0);
+  });
+
+  const maxTotal = Math.max(...totals, 1);
+  chart.innerHTML = "";
+
+  periods.forEach(function (period, index) {
+    const column = document.createElement("div");
+    column.className = "trend-column";
+
+    const value = document.createElement("span");
+    value.className = "trend-value";
+    value.textContent = "₹" + totals[index].toLocaleString("en-IN");
+
+    const barArea = document.createElement("div");
+    barArea.className = "trend-bar-area";
+
+    const bar = document.createElement("div");
+    bar.className = "trend-bar " + colorClass;
+    bar.style.height = totals[index] > 0 ? Math.max((totals[index] / maxTotal) * 100, 4) + "%" : "0%";
+    bar.title = period.label + ": ₹" + totals[index].toLocaleString("en-IN");
+
+    const label = document.createElement("span");
+    label.className = "trend-label";
+    label.textContent = period.label;
+
+    barArea.appendChild(bar);
+    column.appendChild(value);
+    column.appendChild(barArea);
+    column.appendChild(label);
+    chart.appendChild(column);
+  });
+}
+
+function updateTimeAnalytics() {
+  const expenses = readStorageJSON("expenses", []);
+  const selectedMonthKey = getSelectedMonthKey();
+  const [selectedYear, selectedMonth] = selectedMonthKey.split("-").map(Number);
+
+  const monthlyPeriods = [];
+  for (let i = 5; i >= 0; i--) {
+    const monthDate = new Date(selectedYear, selectedMonth - 1 - i, 1);
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+
+    monthlyPeriods.push({
+      label: monthDate.toLocaleDateString("en-IN", { month: "short" }),
+      matches: function (date) {
+        return date.getFullYear() === year && date.getMonth() === month;
+      },
+    });
+  }
+
+  const monthlyDescription = document.querySelector("#monthly-chart")?.closest(".trend-card")?.querySelector(".trend-description");
+  if (monthlyDescription) {
+    const firstPeriodDate = new Date(selectedYear, selectedMonth - 1 - 5, 1);
+    const lastPeriodDate = new Date(selectedYear, selectedMonth - 1, 1);
+    const firstPeriod = monthlyPeriods[0];
+    const lastPeriod = monthlyPeriods[monthlyPeriods.length - 1];
+    monthlyDescription.textContent =
+      "Your spending from " + firstPeriod.label + " " + firstPeriodDate.getFullYear() + " to " + lastPeriod.label + " " + lastPeriodDate.getFullYear();
+  }
+
+  renderTrendChart("monthly-chart", monthlyPeriods, expenses, "");
+
+  const selectedDay = selectedMonthKey === getCurrentMonthKey() ? new Date().getDate() : 15;
+  const weekAnchor = new Date(selectedYear, selectedMonth - 1, Math.min(selectedDay, new Date(selectedYear, selectedMonth, 0).getDate()));
+  const mondayOffset = (weekAnchor.getDay() + 6) % 7;
+  const monday = new Date(weekAnchor);
+  monday.setDate(weekAnchor.getDate() - mondayOffset);
+
+  const weeklyPeriods = [];
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(monday);
+    day.setDate(monday.getDate() + i);
+    const year = day.getFullYear();
+    const month = day.getMonth();
+    const dateNumber = day.getDate();
+
+    weeklyPeriods.push({
+      label: day.toLocaleDateString("en-IN", { weekday: "short" }),
+      matches: function (expenseDate) {
+        return (
+          expenseDate.getFullYear() === year &&
+          expenseDate.getMonth() === month &&
+          expenseDate.getDate() === dateNumber
+        );
+      },
+    });
+  }
+
+  const weeklyDescription = document.querySelector("#weekly-chart")?.closest(".trend-card")?.querySelector(".trend-description");
+  if (weeklyDescription) {
+    const startDate = new Date(monday);
+    const endDate = new Date(monday);
+    endDate.setDate(monday.getDate() + 6);
+    weeklyDescription.textContent =
+      "Week of " + startDate.toLocaleDateString("en-IN", { day: "numeric", month: "short" }) + " – " + endDate.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+  }
+
+  renderTrendChart("weekly-chart", weeklyPeriods, expenses, "weekly-bar");
+}
+
+migrateLegacyBudgetStorage();
+renderMonthSelectors();
+displayExpenses();

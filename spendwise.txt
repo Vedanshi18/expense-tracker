@@ -1,0 +1,19 @@
+allow to choose from recurring expenses like bill every month
+
+OR
+
+show a suggestion list of predefined hardcoded expenses to choose from , user may or may not choose
+
+Also add an option to allow choosing from history, already added expenses by user
+
+reusability 
+
+when a new account is created, save the data in index db , then fetch from there and check islogged in true
+
+also reminders to add :
+
+bill due and all, date is arriving and all, pay fees
+
+freeze future dates in calendar
+
+keep default date of today, no need to select from calendar

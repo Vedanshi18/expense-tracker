@@ -53,7 +53,15 @@
 
             <!-- DASHBOARD -->
             <section id="dashboard-section" class="app-section">
-                <h2>Overview</h2>
+                <div class="section-header-inline">
+                    <h2>Overview</h2>
+                    <div class="month-selector" aria-label="Choose month">
+                        <button type="button" class="month-nav-btn" data-month-nav="prev" aria-label="Previous month">‹</button>
+                        <span class="month-label" id="dashboard-month-label">This Month</span>
+                        <button type="button" class="month-nav-btn" data-month-nav="next" aria-label="Next month">›</button>
+                        <button type="button" class="current-month-btn">This Month</button>
+                    </div>
+                </div>
 
                 <div class="summary-cards">
 
@@ -131,6 +139,14 @@
                     </div>
 
                     <div class="expense-control">
+                        <label for="month-view-filter">View</label>
+                        <select id="month-view-filter">
+                            <option value="selected">Selected month</option>
+                            <option value="all">All months</option>
+                        </select>
+                    </div>
+
+                    <div class="expense-control">
                         <label for="expense-sort">Sort by</label>
                         <select id="expense-sort">
                             <option value="newest">Newest</option>
@@ -191,8 +207,18 @@
 
             <!-- ANALYTICS -->
             <section id="analytics-section" class="app-section">
-                <h2>Analytics</h2>
-                <p>Understand where your money is going.</p>
+                <div class="section-header-inline">
+                    <div>
+                        <h2>Analytics</h2>
+                        <p>Understand where your money is going.</p>
+                    </div>
+                    <div class="month-selector" aria-label="Choose month">
+                        <button type="button" class="month-nav-btn" data-month-nav="prev" aria-label="Previous month">‹</button>
+                        <span class="month-label" id="analytics-month-label">This Month</span>
+                        <button type="button" class="month-nav-btn" data-month-nav="next" aria-label="Next month">›</button>
+                        <button type="button" class="current-month-btn">This Month</button>
+                    </div>
+                </div>
                 <div class="analytics-summary">
                     <div class="analytics-card">
                         <p>Total Spending</p>
@@ -224,6 +250,21 @@
                         <div id="category-list"></div>
                     </div>
                 </div>
+
+                <!-- TIME-BASED ANALYTICS -->
+                <div class="trends-grid">
+                    <div class="trend-card">
+                        <h3>Monthly Spending</h3>
+                        <p class="trend-description">Your spending over the last 6 months</p>
+                        <div id="monthly-chart" class="trend-chart"></div>
+                    </div>
+                    <div class="trend-card">
+                        <h3>Weekly Spending</h3>
+                        <p class="trend-description">Your spending from Monday to Sunday</p>
+                        <div id="weekly-chart" class="trend-chart"></div>
+                    </div>
+                </div>
+
 
             </section>
 
